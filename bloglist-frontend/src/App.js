@@ -2,12 +2,16 @@ import React, { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import BlogForm from './components/BlogForm'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
+  const [newTitle, setNewTitle] = useState('')
+  const [newAuthor, setNewAuthor] = useState('')
+  const [newUrl, setNewUrl] = useState('')
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -16,7 +20,7 @@ const App = () => {
   }, [])
 
   useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem('loggedNoteappUser')
+    const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
       setUser(user)
@@ -32,15 +36,32 @@ const App = () => {
       })
 
       window.localStorage.setItem(
-        'loggedNoteappUser', JSON.stringify(user)
+        'loggedBlogappUser', JSON.stringify(user)
       )
-
+      blogService.setToken(user.token)
       setUser(user)
       setUsername('')
       setPassword('')
     } catch (exception) {
       alert('wrong credentials')
     }
+  }
+  const addBlog = (event) => {
+    event.preventDefault()
+    const blogObject = {
+      title: newTitle,
+      author: newAuthor,
+      url: newUrl,
+    }
+
+    blogService
+      .create(blogObject)
+      .then(returnedBlog => {
+        setBlogs(blogs.concat(returnedBlog))
+        setNewTitle('')
+        setNewAuthor('')
+        setNewUrl('')
+      })
   }
 
   const loginForm = () => (
@@ -72,12 +93,13 @@ const App = () => {
     <div>
       {user === null ?
         loginForm() :
+
         <div>
           <h2>blogs</h2>
           <p>
             {user.name} logged in
             <button onClick={() => {
-              window.localStorage.removeItem('loggedNoteappUser')
+              window.localStorage.removeItem('loggedBlogappUser')
               window.location.reload()
             }  
             }>logout</button>
@@ -85,8 +107,20 @@ const App = () => {
           {blogs.map(blog =>
             <Blog key={blog.id} blog={blog} />
           )}
+          <h2>create new</h2>
+          <BlogForm 
+            addBlog={addBlog}
+            newTitle={newTitle}
+            newAuthor={newAuthor}
+            newUrl={newUrl}
+            handleTitleChange={({ target }) => setNewTitle(target.value)}
+            handleAuthorChange={({ target }) => setNewAuthor(target.value)}
+            handleUrlChange={({ target }) => setNewUrl(target.value)}
+          />
         </div>
+
       }
+
     </div>
   )
 }

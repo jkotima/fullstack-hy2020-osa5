@@ -3,6 +3,7 @@ import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import BlogForm from './components/BlogForm'
+import Notification from './components/Notification'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -12,6 +13,7 @@ const App = () => {
   const [newTitle, setNewTitle] = useState('')
   const [newAuthor, setNewAuthor] = useState('')
   const [newUrl, setNewUrl] = useState('')
+  const [notification, setNotification] = useState(null)
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -43,9 +45,10 @@ const App = () => {
       setUsername('')
       setPassword('')
     } catch (exception) {
-      alert('wrong credentials')
+      setTimedNotification('wrong username or password', true)
     }
   }
+
   const addBlog = (event) => {
     event.preventDefault()
     const blogObject = {
@@ -61,7 +64,15 @@ const App = () => {
         setNewTitle('')
         setNewAuthor('')
         setNewUrl('')
+        setTimedNotification(`a new blog ${returnedBlog.title} added`)
       })
+  }
+
+  const setTimedNotification = (message, error=false) => {
+      setNotification({message, error})
+      setTimeout(() => {
+          setNotification(null)
+      }, 5000)
   }
 
   const loginForm = () => (
@@ -91,6 +102,7 @@ const App = () => {
 
   return (
     <div>
+      <Notification notification={notification}/>
       {user === null ?
         loginForm() :
 

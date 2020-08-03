@@ -48,7 +48,7 @@ const App = () => {
       setTimedNotification('wrong username or password', true)
     }
   }
-  
+
   const addBlog = (blogObject) => {
     blogFormRef.current.toggleVisibility()
     blogService
@@ -59,12 +59,26 @@ const App = () => {
         setTimedNotification(`a new blog ${returnedBlog.title} added`)
       })
   }
-  
-  const setTimedNotification = (message, error=false) => {
-      setNotification({message, error})
-      setTimeout(() => {
-          setNotification(null)
-      }, 5000)
+
+  const likeBlog = (blogObject) => {
+    blogObject.likes++
+    blogService
+      .update(blogObject)
+      .then(returnedBlog => {
+        returnedBlog.user = blogObject.user
+        setBlogs(blogs.map(blog =>
+          blog.id === returnedBlog.id
+            ? returnedBlog
+            : blog
+        ))
+      })
+  }
+
+  const setTimedNotification = (message, error = false) => {
+    setNotification({ message, error })
+    setTimeout(() => {
+      setNotification(null)
+    }, 5000)
   }
 
   const loginForm = () => (
@@ -95,14 +109,14 @@ const App = () => {
   const blogForm = () => (
     <Togglable buttonLabel='create new blog' ref={blogFormRef}>
       <h2>create new</h2>
-      <BlogForm createBlog={addBlog}/>
+      <BlogForm createBlog={addBlog} />
     </Togglable>
 
   )
 
   return (
     <div>
-      <Notification notification={notification}/>
+      <Notification notification={notification} />
       {user === null ?
         loginForm() :
 
@@ -113,11 +127,11 @@ const App = () => {
             <button onClick={() => {
               window.localStorage.removeItem('loggedBlogappUser')
               window.location.reload()
-            }  
+            }
             }>logout</button>
           </p>
           {blogs.map(blog =>
-            <Blog key={blog.id} blog={blog} />
+            <Blog key={blog.id} blog={blog} likeBlog={likeBlog} />
           )}
           {blogForm()}
         </div>

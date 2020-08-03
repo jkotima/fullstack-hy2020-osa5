@@ -4,6 +4,7 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 import BlogForm from './components/BlogForm'
 import Notification from './components/Notification'
+import Togglable from './components/Togglable'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -14,6 +15,8 @@ const App = () => {
   const [newAuthor, setNewAuthor] = useState('')
   const [newUrl, setNewUrl] = useState('')
   const [notification, setNotification] = useState(null)
+
+  const blogFormRef = React.createRef()
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -50,6 +53,8 @@ const App = () => {
   }
 
   const addBlog = (event) => {
+    blogFormRef.current.toggleVisibility()
+
     event.preventDefault()
     const blogObject = {
       title: newTitle,
@@ -100,6 +105,21 @@ const App = () => {
     </form>
   )
 
+  const blogForm = () => (
+    <Togglable buttonLabel='new blog' ref={blogFormRef}>
+      <BlogForm 
+        addBlog={addBlog}
+        newTitle={newTitle}
+        newAuthor={newAuthor}
+        newUrl={newUrl}
+        handleTitleChange={({ target }) => setNewTitle(target.value)}
+        handleAuthorChange={({ target }) => setNewAuthor(target.value)}
+        handleUrlChange={({ target }) => setNewUrl(target.value)}
+      />
+    </Togglable>
+
+  )
+
   return (
     <div>
       <Notification notification={notification}/>
@@ -120,19 +140,9 @@ const App = () => {
             <Blog key={blog.id} blog={blog} />
           )}
           <h2>create new</h2>
-          <BlogForm 
-            addBlog={addBlog}
-            newTitle={newTitle}
-            newAuthor={newAuthor}
-            newUrl={newUrl}
-            handleTitleChange={({ target }) => setNewTitle(target.value)}
-            handleAuthorChange={({ target }) => setNewAuthor(target.value)}
-            handleUrlChange={({ target }) => setNewUrl(target.value)}
-          />
+          {blogForm()}
         </div>
-
       }
-
     </div>
   )
 }

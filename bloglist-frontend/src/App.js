@@ -11,9 +11,6 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [newTitle, setNewTitle] = useState('')
-  const [newAuthor, setNewAuthor] = useState('')
-  const [newUrl, setNewUrl] = useState('')
   const [notification, setNotification] = useState(null)
 
   const blogFormRef = React.createRef()
@@ -51,28 +48,17 @@ const App = () => {
       setTimedNotification('wrong username or password', true)
     }
   }
-
-  const addBlog = (event) => {
+  
+  const addBlog = (blogObject) => {
     blogFormRef.current.toggleVisibility()
-
-    event.preventDefault()
-    const blogObject = {
-      title: newTitle,
-      author: newAuthor,
-      url: newUrl,
-    }
-
     blogService
       .create(blogObject)
       .then(returnedBlog => {
         setBlogs(blogs.concat(returnedBlog))
-        setNewTitle('')
-        setNewAuthor('')
-        setNewUrl('')
         setTimedNotification(`a new blog ${returnedBlog.title} added`)
       })
   }
-
+  
   const setTimedNotification = (message, error=false) => {
       setNotification({message, error})
       setTimeout(() => {
@@ -107,15 +93,7 @@ const App = () => {
 
   const blogForm = () => (
     <Togglable buttonLabel='new blog' ref={blogFormRef}>
-      <BlogForm 
-        addBlog={addBlog}
-        newTitle={newTitle}
-        newAuthor={newAuthor}
-        newUrl={newUrl}
-        handleTitleChange={({ target }) => setNewTitle(target.value)}
-        handleAuthorChange={({ target }) => setNewAuthor(target.value)}
-        handleUrlChange={({ target }) => setNewUrl(target.value)}
-      />
+      <BlogForm createBlog={addBlog}/>
     </Togglable>
 
   )

@@ -77,6 +77,18 @@ const App = () => {
       })
   }
 
+  const removeBlog = (blogObject) => {
+    if (!window.confirm(`Remove blog ${blogObject.title}?`)) {
+      return
+    }
+
+    blogService
+      .remove(blogObject)
+      .then(
+        setBlogs(blogs.filter(blog => blog.id !== blogObject.id))
+      )
+  }
+
   const setTimedNotification = (message, error = false) => {
     setNotification({ message, error })
     setTimeout(() => {
@@ -134,7 +146,7 @@ const App = () => {
             }>logout</button>
           </p>
           {blogs.map(blog =>
-            <Blog key={blog.id} blog={blog} likeBlog={likeBlog} />
+            <Blog key={blog.id} blog={blog} likeBlog={likeBlog} removeBlog={removeBlog} user={user}/>
           )}
           {blogForm()}
         </div>

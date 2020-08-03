@@ -54,6 +54,7 @@ const App = () => {
     blogService
       .create(blogObject)
       .then(returnedBlog => {
+        returnedBlog.user = user
         setBlogs(blogs.concat(returnedBlog))
         setTimedNotification(`a new blog ${returnedBlog.title} added`)
       })
@@ -92,7 +93,8 @@ const App = () => {
   )
 
   const blogForm = () => (
-    <Togglable buttonLabel='new blog' ref={blogFormRef}>
+    <Togglable buttonLabel='create new blog' ref={blogFormRef}>
+      <h2>create new</h2>
       <BlogForm createBlog={addBlog}/>
     </Togglable>
 
@@ -117,7 +119,6 @@ const App = () => {
           {blogs.map(blog =>
             <Blog key={blog.id} blog={blog} />
           )}
-          <h2>create new</h2>
           {blogForm()}
         </div>
       }

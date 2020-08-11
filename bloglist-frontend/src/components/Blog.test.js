@@ -5,7 +5,7 @@ import Blog from './Blog'
 //import { prettyDOM } from '@testing-library/dom'
 
 describe('<Blog />', () => {
-  let blog, user, mockHandler, component
+  let blog, user, likeBlogMockHandler, removeBlogMockHandler, component
 
   beforeEach(() => {
     blog = {
@@ -21,10 +21,12 @@ describe('<Blog />', () => {
     user = {
       username: 'Test user'
     }
-    mockHandler = jest.fn()
+
+    likeBlogMockHandler = jest.fn()
+    removeBlogMockHandler = jest.fn()
 
     component = render(
-      <Blog blog={blog} likeBlog={mockHandler} removeBlog={mockHandler} user={user} />
+      <Blog blog={blog} likeBlog={likeBlogMockHandler} removeBlog={removeBlogMockHandler} user={user} />
     )
   })
 
@@ -43,8 +45,8 @@ describe('<Blog />', () => {
   })
 
   test('after clicking view-button, url and likes are visible', () => {
-    const button = component.getByText('view')
-    fireEvent.click(button)
+    const viewButton = component.getByText('view')
+    fireEvent.click(viewButton)
 
     const divWithUrl = component.getByText('Test url', { exact: false })
     const divWithLikes = component.getByText('12345', { exact: false })
@@ -52,4 +54,13 @@ describe('<Blog />', () => {
     expect(divWithUrl).not.toHaveStyle('display: none')
     expect(divWithLikes).not.toHaveStyle('display: none')
   })
+
+  test('after clicking like-button twice, its event handler function is also called twice', () => {
+    const likeButton = component.getByText('like')
+    fireEvent.click(likeButton)
+    fireEvent.click(likeButton)
+
+    expect(likeBlogMockHandler.mock.calls).toHaveLength(2)
+  })
+
 })

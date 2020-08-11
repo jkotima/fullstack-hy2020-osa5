@@ -2,7 +2,6 @@ import React from 'react'
 import '@testing-library/jest-dom/extend-expect'
 import { render, fireEvent } from '@testing-library/react'
 import Blog from './Blog'
-//import { prettyDOM } from '@testing-library/dom'
 
 describe('<Blog />', () => {
   let blog, user, likeBlogMockHandler, removeBlogMockHandler, component
@@ -31,8 +30,6 @@ describe('<Blog />', () => {
   })
 
   test('renders blog title and author on default (without showing url and likes)', () => {
-    //console.log(prettyDOM(component.container))
-
     expect(component.container).toHaveTextContent('Test title')
     expect(component.container).toHaveTextContent('Test author')
 

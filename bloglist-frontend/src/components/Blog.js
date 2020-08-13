@@ -30,7 +30,7 @@ const Blog = ({ blog, likeBlog, removeBlog, user }) => {
         </div>
         <div style={showWhenVisible}>
           {blog.url}<br />
-          likes {blog.likes} <button onClick={() => likeBlog(blog)}>like</button> <br />
+          likes {blog.likes} <button id="like-button" onClick={() => likeBlog(blog)}>like</button> <br />
           {blog.user.name}<br />
           <button onClick={() => removeBlog(blog)} style={showWhenCurrentUsersBlog}>remove</button>
         </div>

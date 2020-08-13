@@ -15,7 +15,6 @@ describe('<Blog />', () => {
       user: {
         username: 'Test user'
       }
-
     }
     user = {
       username: 'Test user'

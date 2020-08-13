@@ -51,5 +51,13 @@ describe('Blog list', function() {
       cy.contains('Test title')
       cy.contains('Test author')
     })
+
+    it('A blog can be liked', function() {
+      cy.createBlog({ title:'Blog to be liked', author: 'Test author', url: 'test.url', likes: 0 })
+      cy.contains('Blog to be liked').parent().as('divOfTheBlog')
+      cy.get('@divOfTheBlog').contains('view').click()
+      cy.get('@divOfTheBlog').find('#like-button').click()
+      cy.get('@divOfTheBlog').should('contain', 'likes 1')
+    })
   })
 })

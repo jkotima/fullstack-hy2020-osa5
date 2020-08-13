@@ -36,7 +36,7 @@ describe('Blog list', function () {
     })
   })
 
-  describe.only('When logged in', function () {
+  describe('When logged in', function () {
     beforeEach(function () {
       cy.login({ username: 'Testusername', password: 'Testpassword' })
     })
@@ -87,5 +87,15 @@ describe('Blog list', function () {
       cy.get('@divOfTheBlog').find('#remove-button').should('not.be.visible')
     })
 
+    it('Blogs are arranged from highest to lowest in number of likes', function () {
+      cy.createBlog({ title: 'One like', author: 'Test author', url: 'test.url', likes: 1 })
+      cy.createBlog({ title: 'Three likes', author: 'Test author', url: 'test.url', likes: 3 })
+      cy.createBlog({ title: 'Two likes', author: 'Test author', url: 'test.url', likes: 2 })
+
+      cy.get('#blog')
+        .first().should('contain', 'likes 3')
+        .next().should('contain', 'likes 2')
+        .next().should('contain', 'likes 1')
+    })
   })
 })
